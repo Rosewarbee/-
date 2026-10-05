@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Music Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#eef2ff}
+.layout{display:flex;min-height:100vh}
+aside{width:240px;background:#121a2b;padding:20px;border-right:1px solid #26334d}
+.logo{font-size:21px;font-weight:bold;margin-bottom:30px}
+.logo span{color:#9a84ff}
+.nav{display:block;width:100%;padding:12px;margin:5px 0;border:0;border-radius:10px;background:transparent;color:#9aa8c7;text-align:left;cursor:pointer;font-size:14px}
+.nav:hover,.nav.active{background:#182238;color:#fff}
+main{flex:1}
+header{height:70px;padding:0 30px;background:#121a2b;border-bottom:1px solid #26334d;display:flex;align-items:center;justify-content:space-between}
+.content{padding:30px;max-width:1400px;margin:auto}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h1{margin:0}
+.muted{color:#9aa8c7}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.card,.panel{background:#121a2b;border:1px solid #26334d;border-radius:15px}
+.card{padding:20px}
+.metric{font-size:28px;font-weight:bold;margin-top:12px}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:15px;margin-top:18px}
+.panel{overflow:hidden}
+.panel-head{padding:18px 20px;border-bottom:1px solid #26334d;font-weight:bold}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:15px 20px;border-bottom:1px solid #26334d;font-size:13px}
+th{color:#9aa8c7;font-size:11px}
+button.primary{border:0;background:linear-gradient(135deg,#6d4aff,#9a84ff);color:white;border-radius:9px;padding:11px 16px;font-weight:bold;cursor:pointer}
+.badge{padding:5px 8px;border-radius:7px;font-size:11px}
+.ok{color:#38d996;background:#183b32}
+.pending{color:#e6ad39;background:#3b3219}
+.modal{display:none;position:fixed;inset:0;background:#0009;align-items:center;justify-content:center;padding:20px}
+.modal-box{width:min(650px,100%);background:#121a2b;border:1px solid #26334d;border-radius:18px;overflow:hidden}
+.form{padding:20px}
+input,select{width:100%;padding:11px;margin-top:7px;background:#182238;color:white;border:1px solid #26334d;border-radius:9px}
+label{display:block;margin-bottom:15px;font-size:13px;font-weight:bold}
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+@media(max-width:650px){aside{display:none}.cards{grid-template-columns:1fr}.content{padding:18px}}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+<aside>
+<div class="logo">♫ Music<span>Admin</span></div>
+
+<button class="nav active" onclick="show('dashboard',this)">▦ Dashboard</button>
+<button class="nav" onclick="show('songs',this)">♬ เพลง</button>
+<button class="nav" onclick="show('members',this)">♙ สมาชิก</button>
+<button class="nav" onclick="show('earnings',this)">฿ รายได้</button>
+<button class="nav" onclick="show('withdrawals',this)">⇄ รายการถอนเงิน</button>
+<button class="nav" onclick="show('settings',this)">⚙ ตั้งค่า</button>
+</aside>
+
+<main>
+<header>
+<b>หน้าหลัก / Dashboard</b>
+<span class="muted">Administrator</span>
+</header>
+
+<section class="content" id="content"></section>
+</main>
+</div>
+
+<div class="modal" id="songModal">
+<div class="modal-box">
+<div class="panel-head">เพิ่มเพลงใหม่</div>
+
+<form class="form" onsubmit="saveSong(event)">
+<label>ชื่อเพลง
+<input id="title" required placeholder="ชื่อเพลง">
+</label>
+
+<label>ศิลปิน
+<input id="artist" required placeholder="ชื่อศิลปิน">
+</label>
+
+<label>ไฟล์เพลง
+<input id="file" type="file" accept="audio/*" required>
+</label>
+
+<label>รูปปก
+<input id="cover" type="file" accept="image/*">
+</label>
+
+<label>สถานะ
+<select id="status">
+<option>กำลังใช้งาน</option>
+<option>รอตรวจสอบ</option>
+<option>ปิดการใช้งาน</option>
+</select>
+</label>
+
+<div style="text-align:right">
+<button type="button" class="nav" style="display:inline-block;width:auto" onclick="closeSong()">ยกเลิก</button>
+<button class="primary">บันทึกเพลง</button>
+</div>
+</form>
+</div>
+</div>
+
+<script>
+const content=document.getElementById('content');
+
+function dashboard(){
+content.innerHTML=`
+<div class="head">
+<div>
+<h1>Dashboard</h1>
+<p class="muted">ภาพรวมระบบเพลงและธุรกรรมของคุณ</p>
+</div>
+<button class="primary" onclick="openSong()">＋ เพิ่มเพลง</button>
+</div>
+
+<div class="cards">
+<div class="card"><span class="muted">สมาชิกทั้งหมด</span><div class="metric">12,540</div></div>
+<div class="card"><span class="muted">ยอดฟังเดือนนี้</span><div class="metric">1.28M</div></div>
+<div class="card"><span class="muted">รายได้รวม</span><div class="metric">฿458,200</div></div>
+<div class="card"><span class="muted">รอถอนเงิน</span><div class="metric">฿37,850</div></div>
+</div>
+
+<div class="grid">
+<div class="panel">
+<div class="panel-head">เพลงยอดนิยม</div>
+<table>
+<tr><th>เพลง</th><th>ศิลปิน</th><th>ยอดฟัง</th></tr>
+<tr><td>คืนที่ดาวเต็มฟ้า</td><td>Moonlight</td><td>182,450</td></tr>
+<tr><td>เธอคือคำตอบ</td><td>North Band</td><td>154,220</td></tr>
+<tr><td>เดินไปด้วยกัน</td><td>Skyline</td><td>128,940</td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="panel-head">คำขอถอนเงินล่าสุด</div>
+<table>
+<tr><td>user_1024</td><td>฿1,500</td></tr>
+<tr><td>music_park</td><td>฿800</td></tr>
+<tr><td>natt_studio</td><td>฿2,400</td></tr>
+</table>
+</div>
+</div>`;
+}
+
+function songs(){
+content.innerHTML=`
+<div class="head">
+<div>
+<h1>จัดการเพลง</h1>
+<p class="muted">เพิ่ม แก้ไข และตรวจสอบเพลงในระบบ</p>
+</div>
+<button class="primary" onclick="openSong()">＋ เพิ่มเพลง</button>
+</div>
+
+<div class="panel">
+<div class="panel-head">เพลงทั้งหมด</div>
+<table id="songTable">
+<tr><th>เพลง</th><th>ศิลปิน</th><th>ยอดฟัง</th><th>สถานะ</th></tr>
+<tr>
+<td>คืนที่ดาวเต็มฟ้า</td>
+<td>Moonlight</td>
+<td>182,450</td>
+<td><span class="badge ok">กำลังใช้งาน</span></td>
+</tr>
+<tr>
+<td>เธอคือคำตอบ</td>
+<td>North Band</td>
+<td>154,220</td>
+<td><span class="badge ok">กำลังใช้งาน</span></td>
+</tr>
+<tr>
+<td>เพลงทดลองใหม่จาก YouTube</td>
+<td>ทดลองระบบ</td>
+<td>0</td>
+<td>
+<span class="badge ok">พร้อมทดลอง</span>
+<button class="primary" style="padding:6px 9px" onclick="youtube()">▶ เล่นเพลง</button>
+</td>
+</tr>
+</table>
+</div>`;
+}
+
+function members(){
+content.innerHTML=`
+<div class="head"><div><h1>สมาชิก</h1><p class="muted">จัดการบัญชีสมาชิก</p></div></div>
+<div class="panel">
+<table>
+<tr><th>สมาชิก</th><th>อีเมล</th><th>ยอดเงิน</th><th>สถานะ</th></tr>
+<tr><td>user_1024</td><td>user1024@example.com</td><td>฿2,840</td><td><span class="badge ok">ใช้งาน</span></td></tr>
+<tr><td>music_park</td><td>park@example.com</td><td>฿1,240</td><td><span class="badge ok">ใช้งาน</span></td></tr>
+</table>
+</div>`;
+}
+
+function earnings(){
+content.innerHTML=`
+<div class="head"><div><h1>รายได้</h1><p class="muted">ภาพรวมรายได้ของระบบ</p></div></div>
+<div class="cards">
+<div class="card"><span class="muted">รายได้ทั้งหมด</span><div class="metric">฿458,200</div></div>
+<div class="card"><span class="muted">รายได้เดือนนี้</span><div class="metric">฿82,450</div></div>
+</div>`;
+}
+
+function withdrawals(){
+content.innerHTML=`
+<div class="head"><div><h1>รายการถอนเงิน</h1><p class="muted">ตรวจสอบคำขอถอนเงิน</p></div></div>
+<div class="panel">
+<table>
+<tr><th>สมาชิก</th><th>จำนวน</th><th>ธนาคาร</th><th>สถานะ</th></tr>
+<tr><td>user_1024</td><td>฿1,500</td><td>กสิกรไทย</td><td><span class="badge pending">รอตรวจสอบ</span></td></tr>
+<tr><td>music_park</td><td>฿800</td><td>SCB</td><td><span class="badge pending">รอตรวจสอบ</span></td></tr>
+</table>
+</div>`;
+}
+
+function settings(){
+content.innerHTML=`
+<div class="head"><div><h1>ตั้งค่า</h1><p class="muted">ตั้งค่าระบบหลังบ้าน</p></div></div>
+<div class="panel">
+<div class="panel-head">การตั้งค่าระบบ</div>
+<div style="padding:20px">ระบบเพลงและรายได้</div>
+</div>`;
+}
+
+function show(page,btn){
+document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));
+if(btn)btn.classList.add('active');
+
+if(page==='dashboard')dashboard();
+if(page==='songs')songs();
+if(page==='members')members();
+if(page==='earnings')earnings();
+if(page==='withdrawals')withdrawals();
+if(page==='settings')settings();
+}
+
+function openSong(){
+document.getElementById('songModal').style.display='flex';
+}
+
+function closeSong(){
+document.getElementById('songModal').style.display='none';
+}
+
+function saveSong(e){
+e.preventDefault();
+
+const title=document.getElementById('title').value;
+const artist=document.getElementById('artist').value;
+const status=document.getElementById('status').value;
+
+let songs=JSON.parse(localStorage.getItem('musicSongs')||'[]');
+
+songs.unshift({
+title:title,
+artist:artist,
+status:status,
+plays:0
+});
+
+localStorage.setItem('musicSongs',JSON.stringify(songs));
+
+closeSong();
+alert('เพิ่มเพลงเรียบร้อยแล้ว');
+songs();
+}
+
+function youtube(){
+window.open(
+'https://www.youtube.com/embed/5c-y_LTDpSo',
+'_blank'
+);
+}
+
+dashboard();
+</script>
+</body>
+</html>

@@ -291,8 +291,7 @@ window.open(
 }
 
 dashboard();
-</script>
- function unlockSite(e){
+function unlockSite(e){
   e.preventDefault();
   const p=document.getElementById('sitePassword').value.trim();
   if(p==='123456'){
@@ -304,5 +303,6 @@ dashboard();
   document.getElementById('sitePassword').focus();
   return false;
 }
+</script>
 </body>
 </html>

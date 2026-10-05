@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="th">
 <head>
+  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Music Admin</title>
@@ -43,7 +44,19 @@ label{display:block;margin-bottom:15px;font-size:13px;font-weight:bold}
 </style>
 </head>
 
-<body>
+<body><div id="siteLock" style="position:fixed;inset:0;background:#0b1020;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
+<div style="width:min(420px,100%);background:#121a2b;border:1px solid #26334d;border-radius:16px;padding:28px;text-align:center;color:#eef2ff">
+<div style="font-size:40px;margin-bottom:14px">♫</div>
+<h2>เข้าสู่เว็บไซต์</h2>
+<p style="color:#9aa8c7;font-size:13px">กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
+<form onsubmit="return unlockSite(event)">
+<input id="sitePassword" type="password" placeholder="รหัสผ่าน" autocomplete="off" required style="width:100%;padding:12px;border-radius:10px;border:1px solid #26334d;background:#182238;color:white">
+<div id="lockError" style="display:none;color:#ff7085;font-size:12px;margin-top:8px">รหัสผ่านไม่ถูกต้อง</div>
+<button type="submit" style="width:100%;margin-top:15px;padding:12px;border:0;border-radius:10px;background:#9a84ff;color:white;font-weight:bold">เข้าสู่เว็บไซต์</button>
+</form>
+</div>
+</div>
+  
 <div class="layout">
 
 <aside>
@@ -279,5 +292,17 @@ window.open(
 
 dashboard();
 </script>
+ function unlockSite(e){
+  e.preventDefault();
+  const p=document.getElementById('sitePassword').value.trim();
+  if(p==='123456'){
+    document.getElementById('siteLock').style.display='none';
+    document.getElementById('sitePassword').value='';
+    return false;
+  }
+  document.getElementById('lockError').style.display='block';
+  document.getElementById('sitePassword').focus();
+  return false;
+}
 </body>
 </html>

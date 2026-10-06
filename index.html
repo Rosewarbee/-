@@ -228,21 +228,37 @@ content.innerHTML=`
   </div>
 </div>
 
-<div class="cards">
-  <div class="card">
-    <span class="muted">คำขอถอนทั้งหมด</span>
-    <div class="metric">24</div>
-  </div>
+<div class="panel">
+  <div class="panel-head">ข้อมูลบัญชีรับเงิน</div>
 
-  <div class="card">
-    <span class="muted">รอตรวจสอบ</span>
-    <div class="metric">5</div>
-  </div>
+  <label>ชื่อเจ้าของบัญชี</label>
+  <input id="bankName" type="text" placeholder="ชื่อ-นามสกุล">
 
-  <div class="card">
-    <span class="muted">ยอดถอนเดือนนี้</span>
-    <div class="metric">฿48,500</div>
-  </div>
+  <label>ธนาคาร</label>
+  <select id="bank">
+    <option value="">เลือกธนาคาร</option>
+    <option>กสิกรไทย</option>
+    <option>กรุงเทพ</option>
+    <option>กรุงไทย</option>
+    <option>ไทยพาณิชย์</option>
+    <option>กรุงศรีอยุธยา</option>
+    <option>ทีทีบี</option>
+    <option>ออมสิน</option>
+  </select>
+
+  <label>เลขบัญชี</label>
+  <input id="bankAccount" type="text"
+    inputmode="numeric"
+    placeholder="กรอกเลขบัญชี">
+
+  <label>จำนวนเงินที่ต้องการถอน</label>
+  <input id="withdrawAmount" type="number"
+    min="1"
+    placeholder="จำนวนเงิน">
+
+  <button class="primary" type="button">
+    ส่งคำขอถอนเงิน
+  </button>
 </div>
 
 <div class="panel">
@@ -275,7 +291,6 @@ content.innerHTML=`
   </table>
 </div>
 `;
-}
 
 function settings(){
 content.innerHTML=`

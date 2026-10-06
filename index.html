@@ -67,6 +67,7 @@ label{display:block;margin-bottom:15px;font-size:13px;font-weight:bold}
 <button class="nav" onclick="show('members',this)">♙ สมาชิก</button>
 <button class="nav" onclick="show('earnings',this)">฿ รายได้</button>
 <button class="nav" onclick="show('withdrawals',this)">⇄ รายการถอนเงิน</button>
+ <button class="nav" onclick="show('wallet',this)">💰 Wallet / ถอนเงิน</button>
 <button class="nav" onclick="show('settings',this)">⚙ ตั้งค่า</button>
 </aside>
 
@@ -210,7 +211,9 @@ content.innerHTML=`
 </div>`;
 }
 
-function earnings(){
+
+  
+  function earnings(){
 content.innerHTML=`
 <div class="head"><div><h1>รายได้</h1><p class="muted">ภาพรวมรายได้ของระบบ</p></div></div>
 <div class="cards">
@@ -292,6 +295,45 @@ content.innerHTML=`
 </div>
 `;
 
+function wallet(){
+content.innerHTML=`
+<div class="head">
+  <div>
+    <h1>Wallet / ถอนเงิน</h1>
+    <p class="muted">กรอกข้อมูลบัญชีสำหรับรับเงิน</p>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">ข้อมูลบัญชีรับเงิน</div>
+
+  <label>ชื่อเจ้าของบัญชี</label>
+  <input id="walletName" type="text" placeholder="ชื่อ-นามสกุล">
+
+  <label>ธนาคาร</label>
+  <select id="walletBank">
+    <option value="">เลือกธนาคาร</option>
+    <option>กสิกรไทย</option>
+    <option>กรุงเทพ</option>
+    <option>กรุงไทย</option>
+    <option>ไทยพาณิชย์</option>
+    <option>กรุงศรีอยุธยา</option>
+    <option>ออมสิน</option>
+    <option>ทีทีบี</option>
+  </select>
+
+  <label>เลขบัญชี</label>
+  <input id="walletAccount" type="text" inputmode="numeric" placeholder="กรอกเลขบัญชี">
+
+  <label>จำนวนเงินที่ต้องการถอน</label>
+  <input id="walletAmount" type="number" min="1" placeholder="จำนวนเงิน">
+
+  <button class="primary" type="button">
+    ส่งคำขอถอนเงิน
+  </button>
+</div>
+`;
+}  
 function settings(){
 content.innerHTML=`
 <div class="head"><div><h1>ตั้งค่า</h1><p class="muted">ตั้งค่าระบบหลังบ้าน</p></div></div>
@@ -301,6 +343,7 @@ content.innerHTML=`
 </div>`;
 }
 
+  
 function show(page,btn){
 document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));
 if(btn)btn.classList.add('active');
@@ -311,6 +354,7 @@ if(page==='members')members();
 if(page==='earnings')earnings();
 if(page==='withdrawals')withdrawals();
 if(page==='settings')settings();
+if(page==='wallet')wallet();
 }
 
 function openSong(){
